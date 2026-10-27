@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Secret Santa generator (no sign-up, nothing stored)</title>
+<meta name="description" content="Draw Secret Santa names in your browser and send everyone a private reveal link on WhatsApp, text or email. No sign-up, no emails collected, nothing stored.">
+<link rel="canonical" href="https://www.tchworks.co.uk/free/secret-santa-generator/">
+<style>
+:root{--navy:#13294b;--ink:#1f2933;--muted:#5b6573;--line:#e3e6eb;--yellow:#ffd23f;--cobalt:#1d4ed8;--display:Georgia,"Times New Roman",serif}
+body{margin:0;font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#f7f8fa}
+.wrap{max-width:52rem;margin:0 auto;padding:1.5rem 1rem 3rem} a{color:var(--cobalt)}
+
+.ss h1{font-family:var(--display);font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.15;margin:.2rem 0 .6rem;color:var(--navy)}
+.ss .lede{font-size:1.15rem;color:var(--ink);max-width:46rem}
+.ss .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1.25rem;margin:1.2rem 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.ss label{display:block;font-weight:700;margin:.8rem 0 .3rem;color:var(--navy)}
+.ss .hint{font-weight:400;color:var(--muted);font-size:.95rem}
+.ss input,.ss textarea{width:100%;font:inherit;padding:.65rem .75rem;border:1px solid #cbd0d8;border-radius:10px;background:#fff;color:var(--ink)}
+.ss textarea{min-height:9rem;resize:vertical}
+.ss .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:0 1rem}
+.ss .go{margin-top:1rem;font:inherit;font-weight:800;font-size:1.1rem;border:0;border-radius:12px;padding:.85rem 1.4rem;background:var(--yellow);color:var(--navy);cursor:pointer}
+.ss .go:hover{filter:brightness(.96)}
+.ss .err{color:#b42318;font-weight:700;margin-top:.6rem}
+.ss table{width:100%;border-collapse:collapse}
+.ss td{padding:.6rem .4rem;border-top:1px solid var(--line);vertical-align:middle}
+.ss td.n{font-weight:700}
+.ss .sm{font:inherit;font-size:.92rem;font-weight:700;border:1px solid var(--cobalt);background:#fff;color:var(--cobalt);border-radius:8px;padding:.4rem .7rem;cursor:pointer;margin:.15rem .2rem .15rem 0;display:inline-block}
+.ss .sm.wa{border-color:#128C7E;color:#0b6b60}
+.ss .reveal{text-align:center;padding:2rem 1rem}
+.ss .big{font-family:var(--display);font-size:clamp(2rem,7vw,3.4rem);font-weight:800;color:var(--navy);margin:.5rem 0}
+.ss .kit{background:var(--navy);color:#fff;border-radius:14px;padding:1.25rem;margin:1.5rem 0;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.ss .kit img{width:9rem;border-radius:10px;background:#fff}
+.ss .kit p{margin:.3rem 0}
+.ss .kit a.buy{display:inline-block;background:var(--yellow);color:var(--navy);font-weight:800;border-radius:10px;padding:.6rem 1rem;margin-top:.4rem}
+.ss details{background:#fff;border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;margin:.5rem 0}
+.ss summary{font-weight:700;cursor:pointer;color:var(--navy)}
+.ss .muted{color:var(--muted);font-size:.95rem}
+
+</style></head><body><main class="section"><div class="wrap ss">
+<section id="reveal-view" hidden>
+ <div class="card reveal">
+  <p id="rv-hi" class="muted"></p>
+  <p>Your Secret Santa match is ready. Make sure nobody's looking over your shoulder.</p>
+  <button class="go" id="rv-btn" type="button">Show me who I've got</button>
+  <div id="rv-out" hidden>
+   <p>You're buying a present for</p>
+   <p class="big" id="rv-name"></p>
+   <p id="rv-extra"></p>
+   <p class="muted">Keep it secret. Screenshot this if you'll forget.</p>
+  </div>
+ </div>
+ <p class="muted">Want to run your own? <a href="./">Start a new Secret Santa draw</a>. It's free.</p>
+</section>
+
+<section id="maker-view">
+<h1>Free Secret Santa generator (UK)</h1>
+<p class="lede">Type in everyone's names, tap draw, then send each person their own private link on WhatsApp, text or email. Nobody sees anyone else's match, not even you. No sign-up, no email addresses, nothing saved.</p>
+
+<form class="card" id="ss-form" autocomplete="off">
+ <div class="row">
+  <div><label for="g">Group name <span class="hint">(optional)</span></label><input id="g" maxlength="60" placeholder="e.g. Office Secret Santa 2026"></div>
+  <div><label for="b">Spend limit <span class="hint">(optional)</span></label><input id="b" maxlength="20" placeholder="e.g. £10"></div>
+  <div><label for="d">Swap date <span class="hint">(optional)</span></label><input id="d" maxlength="40" placeholder="e.g. Friday 18 December"></div>
+ </div>
+ <label for="names">Names <span class="hint">(one per line, 3 or more)</span></label>
+ <textarea id="names" placeholder="Sam&#10;Alex&#10;Priya&#10;Jordan&#10;Mum&#10;Dad"></textarea>
+ <label for="apart">Keep apart <span class="hint">(optional; couples or people who shouldn't get each other, one pair per line, e.g. Mum &amp; Dad)</span></label>
+ <textarea id="apart" style="min-height:5rem" placeholder="Mum &amp; Dad"></textarea>
+ <button class="go" type="submit">Draw names</button>
+ <p class="err" id="err" role="alert"></p>
+</form>
+
+<div class="card" id="results" hidden>
+ <h2 style="margin-top:0">Done. Now send everyone their own link</h2>
+ <p>Each link only shows that one person who they're buying for. Send each link to the right person. Don't open the links yourself if you're playing too.</p>
+ <table id="tbl"><tbody></tbody></table>
+ <p class="muted">Closing this page clears the draw, so send the links first. Need to start again? Just tap Draw names again for a fresh draw.</p>
+</div>
+
+<p class="muted">Free and open source (MIT). Hosted version: <a href="https://www.tchworks.co.uk/free/secret-santa-generator/?utm_source=github&amp;utm_campaign=ss-repo">tchworks.co.uk Secret Santa generator</a>. Printable sign-up sheets, gift tags and name-draw slips: <a href="https://www.tchworks.co.uk/shop/secret-santa-organiser-kit?utm_source=github&amp;utm_campaign=ss-repo">Secret Santa Organiser Kit</a>.</p>
+
+<h2>How the Secret Santa draw works</h2>
+<ol>
+ <li><strong>Add the names.</strong> Everyone taking part, one per line. Use names people will recognise, like "Big Dave" and "Dave from accounts".</li>
+ <li><strong>Add anyone to keep apart.</strong> Couples, flatmates, or the two people who bought each other socks last year.</li>
+ <li><strong>Draw.</strong> The generator shuffles until nobody gets themselves and every keep-apart pair is respected.</li>
+ <li><strong>Send the links.</strong> Tap WhatsApp, Copy or Share next to each name. Each person opens their link and taps to see their match.</li>
+</ol>
+
+<h2>Secret Santa rules that save arguments</h2>
+<ul>
+ <li><strong>Set one spend limit and stick to it.</strong> £10 is the most common office limit in the UK; £5 works for big teams and £20 for families.</li>
+ <li><strong>Draw names by mid-November</strong> so people can order online without paying for fast delivery.</li>
+ <li><strong>Ask for a three-item wish list</strong> (one practical, one fun, one food or drink) so nobody's stuck.</li>
+ <li><strong>Agree the swap date before you draw</strong> and say what happens if someone's off sick (they swap when they're back).</li>
+ <li><strong>Remote team?</strong> Ask everyone to share a delivery address with the person buying for them, or set a gift-card-only rule.</li>
+</ul>
+
+<h2>Questions</h2>
+<details><summary>Is this Secret Santa generator free?</summary><p>Yes, completely free. There's no sign-up, no email addresses and no limit on group size.</p></details>
+<details><summary>Can the organiser see who got who?</summary><p>Not unless they open other people's links. The matches aren't shown on the organiser's screen; each person's link reveals only their own match. If you want to be fully hands-off, send the links without opening them.</p></details>
+<details><summary>Do you store our names?</summary><p>No. The draw happens in your own browser and nothing is sent to us or saved. Each person's match lives only inside their own link.</p></details>
+<details><summary>Can I stop couples getting each other?</summary><p>Yes. Add each pair to the "Keep apart" box, one pair per line, like "Mum &amp; Dad".</p></details>
+<details><summary>Someone lost their link. What now?</summary><p>Copy their link again from this page if it's still open. If you've closed it, run a fresh draw and send everyone new links.</p></details>
+<details><summary>How much should we spend on Secret Santa?</summary><p>Most UK offices go for £5 to £15, with £10 the usual middle ground. Families and friend groups often pick £20 to £30.</p></details>
+</section>
+
+
+<script>
+(function(){
+ function enc(o){var s=JSON.stringify(o),b=new TextEncoder().encode(s),r="";for(var i=0;i<b.length;i++)r+=String.fromCharCode(b[i]^0x5A);return btoa(r).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+ function dec(t){t=t.replace(/-/g,"+").replace(/_/g,"/");while(t.length%4)t+="=";var r=atob(t),b=new Uint8Array(r.length);for(var i=0;i<r.length;i++)b[i]=r.charCodeAt(i)^0x5A;return JSON.parse(new TextDecoder().decode(b));}
+ function $(i){return document.getElementById(i);}
+ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+ var base=location.href.split("#")[0];
+ var m=location.hash.match(/^#r=([A-Za-z0-9_-]+)$/);
+ if(m){try{var o=dec(m[1]);$("maker-view").hidden=true;$("reveal-view").hidden=false;
+  $("rv-hi").textContent="Hi "+o.n+(o.g?" · "+o.g:"");
+  $("rv-btn").onclick=function(){$("rv-name").textContent=o.t;var x=[];if(o.b)x.push("Spend limit: "+o.b);if(o.d)x.push("Swap date: "+o.d);$("rv-extra").textContent=x.join(" · ");$("rv-out").hidden=false;this.hidden=true;};
+  return;}catch(e){}}
+ function rnd(n){var a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
+ function shuffle(a){for(var i=a.length-1;i>0;i--){var j=rnd(i+1),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+ function key(s){return s.trim().toLowerCase();}
+ $("ss-form").addEventListener("submit",function(ev){ev.preventDefault();$("err").textContent="";
+  var names=$("names").value.split(/\n/).map(function(s){return s.trim();}).filter(Boolean);
+  var seen={},dup=null;names.forEach(function(n){if(seen[key(n)])dup=n;seen[key(n)]=1;});
+  if(names.length<3){$("err").textContent="Add at least 3 names, one per line.";return;}
+  if(dup){$("err").textContent="\""+dup+"\" is in the list twice. Make each name different (e.g. Dave B and Dave K).";return;}
+  var bad={},unknown=[];$("apart").value.split(/\n/).forEach(function(l){l=l.trim();if(!l)return;var p=l.split(/\s*(?:&|,|\+|\/| and )\s*/i).filter(Boolean);if(p.length!==2){unknown.push(l);return;}
+   if(!seen[key(p[0])]||!seen[key(p[1])]){unknown.push(l);return;}bad[key(p[0])+"|"+key(p[1])]=1;bad[key(p[1])+"|"+key(p[0])]=1;});
+  if(unknown.length){$("err").textContent="Check this keep-apart line: \""+unknown[0]+"\". Use two names from the list, like Mum & Dad.";return;}
+  var res=null;for(var t=0;t<20000&&!res;t++){var r=shuffle(names.slice()),ok=true;for(var i=0;i<names.length;i++){if(key(names[i])===key(r[i])||bad[key(names[i])+"|"+key(r[i])]){ok=false;break;}}if(ok)res=r;}
+  if(!res){$("err").textContent="Those keep-apart rules make a fair draw impossible. Remove one pair and try again.";return;}
+  var g=$("g").value.trim(),b=$("b").value.trim(),d=$("d").value.trim(),tb=$("tbl").querySelector("tbody");tb.innerHTML="";
+  names.forEach(function(n,i){var link=base+"#r="+enc({g:g,b:b,d:d,n:n,t:res[i]});
+   var msg="Hi "+n+", here's your Secret Santa"+(g?" for "+g:"")+". Open this link to see who you're buying for (keep it secret!): "+link;
+   var tr=document.createElement("tr");
+   tr.innerHTML='<td class="n">'+esc(n)+'</td><td><a class="sm wa" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(msg)+'">WhatsApp</a><button class="sm" type="button" data-c>Copy message</button><a class="sm" href="mailto:?subject='+encodeURIComponent("Your Secret Santa"+(g?" - "+g:""))+'&body='+encodeURIComponent(msg)+'">Email</a>'+(navigator.share?'<button class="sm" type="button" data-s>Share</button>':'')+'</td>';
+   tr.querySelector("[data-c]").onclick=function(){var btn=this;(navigator.clipboard?navigator.clipboard.writeText(msg):Promise.reject()).then(function(){btn.textContent="Copied";},function(){window.prompt("Copy this message:",msg);});};
+   var sh=tr.querySelector("[data-s]");if(sh)sh.onclick=function(){navigator.share({title:"Your Secret Santa",text:msg}).catch(function(){});};
+   tb.appendChild(tr);});
+  $("results").hidden=false;$("results").scrollIntoView({behavior:"smooth"});
+ });
+})();
+</script>
+</div></main></body></html>
