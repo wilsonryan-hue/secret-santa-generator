@@ -32,7 +32,10 @@ It's a single file with no dependencies or build step. Put `index.html` on any s
 
 ## Printables
 
-For sign-up sheets, a rules and budget poster, name-draw slips, wish list cards and gift tags, there's the [Secret Santa Organiser Kit](https://www.tchworks.co.uk/shop/secret-santa-organiser-kit?utm_source=github&utm_campaign=ss-repo) (£2.49, print at home).
+**Free starter pack (A4 PDF):** [download the Release](https://github.com/wilsonryan-hue/secret-santa-generator/releases/tag/v1.0.0-free-printable) — sign-up sheet, rules poster, 12 name slips, wish cards, checklist and ready messages.
+
+For the full 20-page pack (22-row sheet, 24 slips, gift tags, who's-got-who tracker, gift ideas £5–£30, remote-team page, guess-your-Santa game): [Secret Santa Organiser Kit](https://www.tchworks.co.uk/shop/secret-santa-organiser-kit?utm_source=github&utm_campaign=ss-repo) (£2.49, print at home) · [Gumroad](https://tchworks.gumroad.com/l/xqixa?utm_source=github&utm_campaign=ss-repo).
+
 
 ## Licence
 
