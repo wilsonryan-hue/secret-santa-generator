@@ -40,3 +40,6 @@ For the full 20-page pack (22-row sheet, 24 slips, gift tags, who's-got-who trac
 ## Licence
 
 MIT. Made by [TCH Works](https://www.tchworks.co.uk/?utm_source=github&utm_campaign=ss-repo).
+
+
+**Free Secret Santa Starter Pack 2026 (A4 PDF) on Gumroad:** https://tchworks.gumroad.com/l/momhqp
